@@ -215,8 +215,10 @@ class ValidateHelper
      */
     private function checkCfCittadino($valore)
     {
-        if (!$this->objCFChecker->isFormallyCorrect($valore)) {
-            $this->addError("<b>" . $valore . "</b> - Codice fiscale (cfCittadino) cittadino non valido");
+        if( strlen($valore) > 0 ) {
+            if (!$this->objCFChecker->isFormallyCorrect($valore)) {
+                $this->addError("<b>" . $valore . "</b> - Codice fiscale (cfCittadino) cittadino non valido");
+            }
         }
     }
 
@@ -287,7 +289,8 @@ class ValidateHelper
      */
     private function checkDatiSpesa($campo, $valore)
     {
-        if ($campo != "flagPagamentoAnticipato") { // flagPagamentoAnticipato e' facoltativo
+        if ($campo != "flagPagamentoAnticipato" &&
+            $campo != "cfCittadino") { // flagPagamentoAnticipato e' facoltativo
 
             $this->checkRequiredField($valore, $campo);
         }

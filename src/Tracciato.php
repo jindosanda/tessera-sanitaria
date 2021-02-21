@@ -61,9 +61,9 @@ class Tracciato
      * @return bool
      */
     public function doTracciato(
-        $codiceRegione,
-        $codiceAsl,
-        $codiceSSA,
+        // $codiceRegione,
+        // $codiceAsl,
+        // $codiceSSA,
         $cfProprietario,
         $pIva,
         $arrSpesa,
@@ -71,9 +71,9 @@ class Tracciato
     ) {
         $this->resetVarTracciato();
 
-        $this->codiceRegione = $codiceRegione;
-        $this->codiceAsl = $codiceAsl;
-        $this->codiceSSA = $codiceSSA;
+        // $this->codiceRegione = $codiceRegione;
+        // $this->codiceAsl = $codiceAsl;
+        // $this->codiceSSA = $codiceSSA;
         $this->cfProprietario = $cfProprietario;
         $this->pIva = $pIva;
         $this->arrSpesa = $arrSpesa;
@@ -143,13 +143,13 @@ class Tracciato
      */
     private function validateParamTracciato()
     {
-        $this->objValidateHelper->checkCodiceRegione($this->codiceRegione);
-        $this->objValidateHelper->checkCodiceAsl($this->codiceAsl);
-        $this->objValidateHelper->checkCodiceSSA($this->codiceSSA);
+        // $this->objValidateHelper->checkCodiceRegione($this->codiceRegione);
+        // $this->objValidateHelper->checkCodiceAsl($this->codiceAsl);
+        // $this->objValidateHelper->checkCodiceSSA($this->codiceSSA);
         $this->objValidateHelper->checkCfProprietario($this->cfProprietario);
         $this->objValidateHelper->checkPIva($this->pIva);
         $this->objValidateHelper->checkArrSpesa($this->arrSpesa);
-        $this->objValidateHelper->checkArrVociSpesa($this->arrVociSpesa);
+        // $this->objValidateHelper->checkArrVociSpesa($this->arrVociSpesa);
 
         $this->addArrErrors($this->objValidateHelper->getArrErrors());
     }
@@ -170,9 +170,9 @@ class Tracciato
         $xml .= '<precompilata xsi:noNamespaceSchemaLocation="730_precompilata.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . PHP_EOL;
 
         $xml .= $this->addTab(1) . '<proprietario>' . PHP_EOL;
-        $xml .= $this->addTab(2) . '<codiceRegione>' . $this->objCleanHelper->clean($this->codiceRegione) . '</codiceRegione>' . PHP_EOL;
-        $xml .= $this->addTab(2) . '<codiceAsl>' . $this->objCleanHelper->clean($this->codiceAsl) . '</codiceAsl>' . PHP_EOL;
-        $xml .= $this->addTab(2) . '<codiceSSA>' . $this->objCleanHelper->clean($this->codiceSSA) . '</codiceSSA>' . PHP_EOL;
+        // $xml .= $this->addTab(2) . '<codiceRegione>' . $this->objCleanHelper->clean($this->codiceRegione) . '</codiceRegione>' . PHP_EOL;
+        // $xml .= $this->addTab(2) . '<codiceAsl>' . $this->objCleanHelper->clean($this->codiceAsl) . '</codiceAsl>' . PHP_EOL;
+        // $xml .= $this->addTab(2) . '<codiceSSA>' . $this->objCleanHelper->clean($this->codiceSSA) . '</codiceSSA>' . PHP_EOL;
         $xml .= $this->addTab(2) . '<cfProprietario>' . $cfencrypted . '</cfProprietario>' . PHP_EOL;
         $xml .= $this->addTab(1) . '</proprietario>' . PHP_EOL;
 
@@ -191,23 +191,26 @@ class Tracciato
 
             // Dati ricevuta/scontrino
             $cfCittadinoEncrypted = $this->encrypt($rigaSpesa['cfCittadino'], 'cfCittadino');
-
             $xml .= $this->addTab(2) . '<idSpesa>' . PHP_EOL;
             $xml .= $this->getSpesaOrRimborsoContent($rigaSpesa);
             $xml .= $this->addTab(2) . '</idSpesa>' . PHP_EOL;
 
             $xml .= $this->addTab(2) . '<dataPagamento>' . $this->objCleanHelper->clean($rigaSpesa['dataPagamento']) . '</dataPagamento>' . PHP_EOL;
-            $xml .= $this->addTab(2) . '<flagPagamentoAnticipato>' . $this->objCleanHelper->clean($rigaSpesa['flagPagamentoAnticipato']) . '</flagPagamentoAnticipato>' . PHP_EOL;
             $xml .= $this->addTab(2) . '<flagOperazione>' . $this->objCleanHelper->clean($rigaSpesa['flagOperazione']) . '</flagOperazione>' . PHP_EOL;
-            $xml .= $this->addTab(2) . '<cfCittadino>' . $cfCittadinoEncrypted . '</cfCittadino>' . PHP_EOL;
-
+            if( $rigaSpesa['flagOpposizione'] != "1" ) {
+                $xml .= $this->addTab(2) . '<cfCittadino>' . $cfCittadinoEncrypted . '</cfCittadino>' . PHP_EOL;
+            }
+            $xml .= $this->addTab(2) . '<pagamentoTracciato>SI</pagamentoTracciato>' . PHP_EOL;
+            $xml .= $this->addTab(2) . '<tipoDocumento>F</tipoDocumento>' . PHP_EOL;
+            $xml .= $this->addTab(2) . '<flagOpposizione>' . $this->objCleanHelper->clean($rigaSpesa['flagOpposizione']) . '</flagOpposizione>' . PHP_EOL;
             // Singole voci della ricevuta/scontrino
             foreach ($this->arrVociSpesa as $rigaVociSpesa) {
                 if (!empty($rigaVociSpesa[$key]['tipoSpesa'])) {
                     $xml .= $this->addTab(2) . '<voceSpesa>' . PHP_EOL;
                     $xml .= $this->addTab(3) . '<tipoSpesa>' . $this->objCleanHelper->clean($rigaVociSpesa[$key]['tipoSpesa']) . '</tipoSpesa>' . PHP_EOL;
-                    $xml .= $this->addTab(3) . '<flagTipoSpesa>' . $this->objCleanHelper->clean($rigaVociSpesa[$key]['flagTipoSpesa']) . '</flagTipoSpesa>' . PHP_EOL;
-                    $xml .= $this->addTab(3) . '<importo>' . $this->objCleanHelper->clean($rigaVociSpesa[$key]['importo']) . '</importo>' . PHP_EOL;
+                    // $xml .= $this->addTab(3) . '<flagTipoSpesa>' . $this->objCleanHelper->clean($rigaVociSpesa[$key]['flagTipoSpesa']) . '</flagTipoSpesa>' . PHP_EOL;
+                    $xml .= $this->addTab(3) . '<importo>' . number_format( $this->objCleanHelper->clean($rigaVociSpesa[$key]['importo']), 2 ) . '</importo>' . PHP_EOL;
+                    $xml .= $this->addTab(3) . '<aliquotaIVA>10.00</aliquotaIVA>' . PHP_EOL;
                     $xml .= $this->addTab(2) . '</voceSpesa>' . PHP_EOL;
                 }
             }
@@ -215,10 +218,11 @@ class Tracciato
             $xml .= $this->addTab(1) . '</documentoSpesa>' . PHP_EOL;
         }
         $xml .= '</precompilata>' . PHP_EOL;
-
+        
         if (!$this->getResult()) {
             $xml = '';
         }
+
 
         return $xml;
     }
